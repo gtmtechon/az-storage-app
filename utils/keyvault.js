@@ -1,7 +1,7 @@
 // services/storageService.js (수정 후)
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { ShareServiceClient } = require("@azure/storage-file-share");
-// const { getSecret } = require("../utils/keyvault"); // 이 줄은 이제 필요 없습니다.
+const { getSecret } = require("../utils/keyvault"); // 이 줄은 이제 필요 없습니다.
 
 const getBlobServiceClient = async () => {
   const accountName = process.env.BLOB_STORAGE_ACCOUNT_NAME;
