@@ -3,7 +3,8 @@ mkdir azure-storage-app
 cd azure-storage-app
 npm init -y
 npm install @azure/identity @azure/keyvault-secrets @azure/storage-blob @azure/storage-file-share express ejs dotenv
-
+실행 : node app.js
+========================================
 
 @azure/identity: Key Vault에 접근하기 위한 인증 라이브러리
 
@@ -33,3 +34,7 @@ BLOB_STORAGE_ACCOUNT_NAME: Blob Storage Account 이름
 FILE_SHARE_STORAGE_ACCOUNT_NAME: File Share Storage Account 이름
 BLOB_CONTAINER_NAME: 특정 Blob 컨테이너의 이름. 이 컨테이너의 파일 목록을 가져옵니다.
 주의: Azure Key Vault에 SAS 토큰을 Secret으로 저장할 때는 토큰 전체를 저장해야 합니다. 또한, App Service에 Key Vault에 접근할 수 있는 권한을 부여해야 합니다. (Managed Identity 사용 권장)
+
+
+
+===========================
