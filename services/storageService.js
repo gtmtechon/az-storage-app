@@ -1,11 +1,12 @@
 // services/storageService.js
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { ShareServiceClient } = require("@azure/storage-file-share");
-const { getSecret } = require("../utils/keyvault");
+//const { getSecret } = require("../utils/keyvault");
 
 const getBlobServiceClient = async () => {
   const accountName = process.env.BLOB_STORAGE_ACCOUNT_NAME;
-  const sasToken = await getSecret(process.env.BLOB_STORAGE_SAS_TOKEN_SECRET_NAME);
+  // const sasToken = await getSecret(process.env.BLOB_STORAGE_SAS_TOKEN_SECRET_NAME); // 이 줄을 수정합니다.
+  const sasToken = process.env.BLOB_SAS_TOKEN; // App Service 환경 변수에서 직접 가져옵니다.
   const blobServiceUri = `https://${accountName}.blob.core.windows.net?${sasToken}`;
   return new BlobServiceClient(blobServiceUri);
 };
