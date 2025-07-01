@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Files Shares</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        h2 { color: #555; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 30px; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 5px; }
+        a { text-decoration: none; color: #007bff; }
+        a:hover { text-decoration: underline; }
+        .back-link { margin-top: 20px; display: block; }
+    </style>
+</head>
+<body>
+    <h1>Azure Files 공유 목록</h1>
+    <% if (shares.length > 0) { %>
+        <% shares.forEach(function(share) { %>
+            <h2>공유: <%= share.name %></h2>
+            <% if (share.files.length > 0) { %>
+                <ul>
+                    <% share.files.forEach(function(file) { %>
+                        <li><a href="<%= file.url %>" target="_blank"><%= file.name %></a></li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>이 공유에는 파일이 없습니다.</p>
+            <% } %>
+        <% }); %>
+    <% } else { %>
+        <p>Azure Files 공유가 없습니다.</p>
+    <% } %>
+    <a href="/" class="back-link">메인으로 돌아가기</a>
+</body>
+</html>

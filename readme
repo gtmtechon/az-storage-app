@@ -1,0 +1,35 @@
+
+mkdir azure-storage-app
+cd azure-storage-app
+npm init -y
+npm install @azure/identity @azure/keyvault-secrets @azure/storage-blob @azure/storage-file-share express ejs dotenv
+
+
+@azure/identity: Key Vault에 접근하기 위한 인증 라이브러리
+
+@azure/keyvault-secrets: Key Vault에서 Secret을 가져오는 라이브러리
+
+@azure/storage-blob: Azure Blob Storage와 상호작용하는 라이브러리
+
+@azure/storage-file-share: Azure Files와 상호작용하는 라이브러리
+
+express: 웹 애플리케이션 프레임워크
+
+ejs: 템플릿 엔진 (화면 구성을 위해 사용)
+
+dotenv: 환경 변수 로드를 위한 라이브러리
+
+KEY_VAULT_URI=YOUR_KEY_VAULT_URI
+BLOB_STORAGE_SAS_TOKEN_SECRET_NAME=YOUR_BLOB_SAS_TOKEN_SECRET_NAME
+FILE_SHARE_SAS_TOKEN_SECRET_NAME=YOUR_FILE_SHARE_SAS_TOKEN_SECRET_NAME
+BLOB_STORAGE_ACCOUNT_NAME=YOUR_BLOB_STORAGE_ACCOUNT_NAME
+FILE_SHARE_STORAGE_ACCOUNT_NAME=YOUR_FILE_SHARE_STORAGE_ACCOUNT_NAME
+BLOB_CONTAINER_NAME=YOUR_BLOB_CONTAINER_NAME # 특정 Blob Container 이름
+
+KEY_VAULT_URI: Azure Key Vault의 URI (예: https://your-key-vault.vault.azure.net/)
+BLOB_STORAGE_SAS_TOKEN_SECRET_NAME: Key Vault에 저장된 Blob SAS 토큰의 Secret 이름
+FILE_SHARE_SAS_TOKEN_SECRET_NAME: Key Vault에 저장된 File Share SAS 토큰의 Secret 이름
+BLOB_STORAGE_ACCOUNT_NAME: Blob Storage Account 이름
+FILE_SHARE_STORAGE_ACCOUNT_NAME: File Share Storage Account 이름
+BLOB_CONTAINER_NAME: 특정 Blob 컨테이너의 이름. 이 컨테이너의 파일 목록을 가져옵니다.
+주의: Azure Key Vault에 SAS 토큰을 Secret으로 저장할 때는 토큰 전체를 저장해야 합니다. 또한, App Service에 Key Vault에 접근할 수 있는 권한을 부여해야 합니다. (Managed Identity 사용 권장)
