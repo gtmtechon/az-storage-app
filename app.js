@@ -1,5 +1,6 @@
 // app.js
-//require("dotenv").config(); // .env 파일 로드
+require("dotenv").config(); // .env 파일 로드
+
 const express = require("express");
 const path = require("path");
 const { getBlobFiles, getAzureFiles } = require("./services/storageService");
@@ -43,6 +44,19 @@ app.get("/azure-files", async (req, res) => {
   try {
     const shares = await getAzureFiles();
     res.render("azureFiles", { shares });
+  } catch (error) {
+    console.error("Error fetching Azure files:", error);
+    res.status(500).send("Error fetching Azure files. Please check logs for details.");
+  }
+});
+
+
+
+// smb Files 공유 및 파일 목록 페이지
+app.get("/smb-files", async (req, res) => {
+  try {
+    const shares = await getSMBFiles();
+    res.render("smbFiles", { shares });
   } catch (error) {
     console.error("Error fetching Azure files:", error);
     res.status(500).send("Error fetching Azure files. Please check logs for details.");

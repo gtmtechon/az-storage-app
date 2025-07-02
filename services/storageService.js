@@ -197,7 +197,70 @@ async function getAzureFiles() {
   }
 }
 
+
+const fs = require('fs').promises;
+const path = require('path');
+
+// App Service에 마운트된 Azure File Share의 경로
+const MOUNT_PATH = '/mnt/appdata';
+
+/**
+ * SMB로 마운트된 파일 공유의 파일 목록을 가져오는 함수.
+ * EJS 템플릿의 'shares' 변수 형식에 맞춰 데이터를 반환합니다.
+ *
+ * @returns {Promise<Array<{name: string, files: Array<{name: string, url: string, shareName: string}>}>>}
+ * 파일 공유 목록 (단일 마운트된 공유이므로 배열에 하나의 공유 객체만 포함).
+ */
+async function getSMBFiles() {
+    console.log(`마운트된 경로 '${MOUNT_PATH}'에서 파일 목록을 조회합니다.`);
+    let filesInShare = [];
+    const shareName = 'Mounted Azure File Share'; // 단일 마운트된 공유이므로 고정된 이름 사용
+
+    try {
+        // 마운트 경로가 존재하는지 확인
+        await fs.access(MOUNT_PATH);
+
+        const files = await fs.readdir(MOUNT_PATH);
+        // 숨김 파일이나 시스템 파일 제외 (선택 사항)
+        const filteredFiles = files.filter(file => !file.startsWith('.'));
+
+        for (const file of filteredFiles) {
+            // 파일의 전체 경로
+            const fullPath = path.join(MOUNT_PATH, file);
+            const stats = await fs.stat(fullPath);
+
+            // 디렉토리는 제외하고 파일만 포함 (또는 디렉토리도 포함하려면 로직 변경)
+            if (stats.isFile()) {
+                // 웹에서 접근할 수 있는 URL 생성
+                // 파일은 '/files/:filename' 라우트를 통해 서빙됩니다.
+                const fileUrl = `/files/${encodeURIComponent(file)}`;
+
+                filesInShare.push({
+                    name: file,
+                    url: fileUrl,
+                    shareName: shareName // EJS 템플릿에 맞춰 shareName 추가
+                });
+            }
+        }
+        console.log(`총 ${filesInShare.length}개의 파일을 찾았습니다.`);
+        // EJS 템플릿의 'shares' 형식에 맞춰 배열 반환
+        return [{ name: shareName, files: filesInShare }];
+
+    } catch (error) {
+        console.error('getSMBFiles 함수에서 오류 발생:', error);
+        if (error.code === 'ENOENT') {
+            throw new Error(`마운트 경로 '${MOUNT_PATH}'를 찾을 수 없습니다. App Service 마운트 설정을 확인해주세요.`);
+        } else if (error.code === 'EACCES') {
+            throw new Error(`마운트 경로 '${MOUNT_PATH}'에 대한 접근 권한이 없습니다.`);
+        } else {
+            throw new Error(`파일 목록 조회 실패: ${error.message}`);
+        }
+    }
+}
+
+
 module.exports = {
   getBlobFiles,
   getAzureFiles,
+  getSMBFiles
 };
