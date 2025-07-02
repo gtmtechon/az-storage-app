@@ -1,42 +1,5 @@
-// services/storageService.js
-
 const { BlobServiceClient } = require("@azure/storage-blob");
-//const { ShareServiceClient, AzureSasCredential } = require('@azure/storage-file-share');
 const { ShareServiceClient, StorageSharedKeyCredential } = require('@azure/storage-file-share');
-
-/*
-const accountName="stakvapptest";
-const fshareName="pictures";
-const sasToken="?sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2026-07-02T08:48:45Z&st=2025-07-02T00:48:45Z&spr=https&sig=jzMPwZ5xN0wpqje2OV7CsZiVwbFQ05C8gl%2B7%2FEkerTQ%3D";
-const acckey="PvHD8lU7Iqzp+scEkf7yniSdgNg8ZIzKSxgFkx8W/pMt3EQAl93kUj9j6HO3S+ydQCwoPdFha7I9+AStb0JmtA==";
-*/
-
-
-// const { getSecret } = require("../utils/keyvault"); // Key Vault 참조를 사용할 경우 이 줄은 필요 없습니다.
-
-/*
-const getBlobServiceClient = async () => {
-  shareServiceUri=""
-  const accountName = process.env.BLOB_STORAGE_ACCOUNT_NAME;
-  const sasToken = process.env.BLOB_SAS_TOKEN; // Key Vault 참조를 통해 환경 변수로 주입된 SAS 토큰
-  if (!sasToken) {
-    throw new Error("BLOB_SAS_TOKEN environment variable is not set.");
-  }
-  const blobServiceUri = `https://${accountName}.blob.core.windows.net?${sasToken}`; // 이 URI는 BlobServiceClient를 초기화하는 데 사용됩니다.
-  return new BlobServiceClient(blobServiceUri);
-};
-
-const getShareServiceClient = async () => {
-  shareServiceUri=""
-  const accountName = process.env.FILE_SHARE_STORAGE_ACCOUNT_NAME;
-  const sasToken = process.env.FILE_SAS_TOKEN; // Key Vault 참조를 통해 환경 변수로 주입된 SAS 토큰 (Azure Files용)
-  if (!sasToken) {
-    throw new Error("FILE_SAS_TOKEN environment variable is not set.");
-  }
-  const shareServiceUri = `https://${accountName}.file.core.windows.net?${sasToken}`;
-  return new ShareServiceClient(shareServiceUri);
-};
-*/
 
 
 // getBlobFiles 함수를 수정합니다.
@@ -201,9 +164,6 @@ async function getAzureFilesOrig() {
   // getShareServiceClient에서 이미 SAS 토큰을 사용하여 클라이언트를 초기화하기 때문입니다.
   // 다만, 필요하다면 Blob 파일처럼 명시적으로 URL을 구성할 수 있습니다.
   try {
-    //const accountName = process.env.FILE_SHARE_STORAGE_ACCOUNT_NAME;
-    //const sasToken = process.env.FILE_SAS_TOKEN;
-    //const fshareName = process.env.AZURE_FILE_SHARE_NAME; // 목록을 가져올 파일 공유 이름
 
 
     if (!accountName || !sasToken || !fshareName) {
