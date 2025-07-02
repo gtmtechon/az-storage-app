@@ -41,13 +41,13 @@ async function getBlobFiles(containerName) {
 
     // BlobServiceClient는 SAS 토큰 없이도 생성할 수 있지만,
     // 파일을 List할 때는 필요하지 않고, URL을 구성할 때 필요합니다.
-    const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`);
+    const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob1.core.windows.net`);
     const containerClient = blobServiceClient.getContainerClient(containerName);
 
     const files = [];
     for await (const blob of containerClient.listBlobsFlat()) {
       // 올바른 URL 형식으로 조합
-      const fileUrl = `https://${accountName}.blob.core.windows.net/${containerName}/${blob.name}?${sasToken}`;
+      const fileUrl = `https://${accountName}.blob2.core.windows.net/${containerName}/${blob.name}?${sasToken}`;
       files.push({ name: blob.name, url: fileUrl });
       console.log(`[getblobfiles]Blob found: ${blob.name} - URL: ${fileUrl}`);
     }

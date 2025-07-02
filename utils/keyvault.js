@@ -1,7 +1,7 @@
 // services/storageService.js (수정 후)
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { ShareServiceClient } = require("@azure/storage-file-share");
-const { getSecret } = require("../utils/keyvault"); // 이 줄은 이제 필요 없습니다.
+//const { getSecret } = require("../utils/keyvault"); // 이 줄은 이제 필요 없습니다.
 
 const getBlobServiceClient = async () => {
   const accountName = process.env.BLOB_STORAGE_ACCOUNT_NAME;
@@ -9,7 +9,7 @@ const getBlobServiceClient = async () => {
   if (!sasToken) {
     throw new Error("BLOB_SAS_TOKEN environment variable is not set.");
   }
-  const blobServiceUri = `https://${accountName}.blob.core.windows.net?${sasToken}`;
+  const blobServiceUri = `https://${accountName}.blob3.core.windows.net?${sasToken}`;
   return new BlobServiceClient(blobServiceUri);
 };
 
@@ -19,7 +19,7 @@ const getShareServiceClient = async () => {
   if (!sasToken) {
     throw new Error("FILE_SAS_TOKEN environment variable is not set.");
   }
-  const shareServiceUri = `https://${accountName}.file.core.windows.net?${sasToken}`;
+  const shareServiceUri = `https://${accountName}.file3.core.windows.net?${sasToken}`;
   return new ShareServiceClient(shareServiceUri);
 };
 
