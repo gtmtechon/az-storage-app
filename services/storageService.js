@@ -54,7 +54,7 @@ async function getBlobFiles(containerName) {
   }
 }
 
-async function getAzureFiles() {
+async function getAzureFilesOrig() {
   // 이 함수는 현재 SAS 토큰을 파일 URL에 직접 추가할 필요가 없습니다.
   // getShareServiceClient에서 이미 SAS 토큰을 사용하여 클라이언트를 초기화하기 때문입니다.
   // 다만, 필요하다면 Blob 파일처럼 명시적으로 URL을 구성할 수 있습니다.
@@ -69,7 +69,7 @@ async function getAzureFiles() {
 
 
      // AzureSasCredential을 사용하여 인증 정보 생성
-        const sasCredential = new AzureSasCredential(AZURE_FILE_SHARE_SAS_TOKEN);
+        const sasCredential = new AzureSasCredential(sasToken);
 
         // ShareServiceClient 초기화 (SAS 토큰 포함)
         // SAS 토큰은 파일 공유(Share) 수준에서 발급되어야 합니다.
@@ -94,6 +94,72 @@ async function getAzureFiles() {
 
 
 
+
+    //const shareServiceClient = new ShareServiceClient(`https://${accountName}.file.core.windows.net?${sasToken}`);
+    const shares = [];
+    for await (const shareItem of shareServiceClient.listShares()) {
+      const shareClient = shareServiceClient.getShareClient(shareItem.name);
+      const rootDirectoryClient = shareClient.getRootDirectoryClient();
+      const filesInShare = [];
+      for await (const directoryEntry of rootDirectoryClient.listFilesAndDirectories()) {
+        if (directoryEntry.kind === "file") {
+          // Azure Files는 SAS 토큰이 서비스 클라이언트에 포함되어 있으므로
+          // 파일 URL은 일반적으로 `shareClient.url`을 기반으로 합니다.
+          // 여기서도 명시적으로 SAS 토큰을 URL에 포함시키려면 아래처럼 할 수 있습니다.
+          const fileUrl = `${shareClient.url}/${directoryEntry.name}?${sasToken}`;
+          filesInShare.push({
+            name: directoryEntry.name,
+            url: fileUrl,
+            shareName: shareItem.name
+          });
+        }
+      }
+      shares.push({ name: shareItem.name, files: filesInShare });
+    }
+    return shares;
+  } catch (error) {
+    console.error("Failed to list Azure Files shares and files:", error);
+    throw error;
+  }
+}
+
+
+async function getAzureFiles() {
+  // 이 함수는 현재 SAS 토큰을 파일 URL에 직접 추가할 필요가 없습니다.
+  // getShareServiceClient에서 이미 SAS 토큰을 사용하여 클라이언트를 초기화하기 때문입니다.
+  // 다만, 필요하다면 Blob 파일처럼 명시적으로 URL을 구성할 수 있습니다.
+  try {
+// 환경 변수에서 Azure Storage 계정 정보 및 SAS 토큰 로드
+    const accountName = process.env.FILE_SHARE_STORAGE_ACCOUNT_NAME;
+    const acckey = process.env.AZURE_STORAGE_ACCOUNT_KEY;
+    const fshareName = process.env.AZURE_FILE_SHARE_NAME; // 목록을 가져올 파일 공유 이름
+
+    if (!accountName || !sasToken || !fshareName) {
+      throw new Error("FILE_SHARE_STORAGE_ACCOUNT_NAME or FILE_SAS_TOKEN environment variable is not set.");
+    }
+
+    const sharedKeyCredential = new StorageSharedKeyCredential(
+            accountName,
+            AZURE_STORAGE_ACCOUNT_KEY
+        );
+
+        // ShareServiceClient 초기화 (스토리지 계정 URL과 SharedKeyCredential 사용)
+        const shareServiceClient = new ShareServiceClient(
+            `https://${accountName}.file.core.windows.net`,
+            sharedKeyCredential
+        );
+
+            // 특정 파일 공유 클라이언트 가져오기
+        const shareClient = shareServiceClient.getShareClient(fshareName);
+
+        // 파일 공유가 존재하는지 확인 (SAS 토큰에 따라 권한이 없을 수 있음)
+        if (!(await shareClient.exists())) {
+            console.error(`오류: 파일 공유 '${fshareName}'가 존재하지 않거나, SAS 토큰에 접근 권한이 없습니다.`);
+            return;
+        }
+
+        // 루트 디렉토리 클라이언트 가져오기
+        //const directoryClient = shareClient.getDirectoryClient(''); // 루트 디렉토리
 
     //const shareServiceClient = new ShareServiceClient(`https://${accountName}.file.core.windows.net?${sasToken}`);
     const shares = [];
