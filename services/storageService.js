@@ -1,6 +1,8 @@
 // services/storageService.js
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { ShareServiceClient } = require("@azure/storage-file-share");
+const { ShareServiceClient, AzureSasCredential } = require('@azure/storage-file-share');
+
 // const { getSecret } = require("../utils/keyvault"); // Key Vault 참조를 사용할 경우 이 줄은 필요 없습니다.
 
 const getBlobServiceClient = async () => {
@@ -58,11 +60,41 @@ async function getAzureFiles() {
   try {
     const accountName = process.env.FILE_SHARE_STORAGE_ACCOUNT_NAME;
     const sasToken = process.env.FILE_SAS_TOKEN;
-    if (!accountName || !sasToken) {
+    const fshareName = process.env.AZURE_FILE_SHARE_NAME; // 목록을 가져올 파일 공유 이름
+
+    if (!accountName || !sasToken || !fshareName) {
       throw new Error("FILE_SHARE_STORAGE_ACCOUNT_NAME or FILE_SAS_TOKEN environment variable is not set.");
     }
 
-    const shareServiceClient = new ShareServiceClient(`https://${accountName}.file.core.windows.net?${sasToken}`);
+
+     // AzureSasCredential을 사용하여 인증 정보 생성
+        const sasCredential = new AzureSasCredential(AZURE_FILE_SHARE_SAS_TOKEN);
+
+        // ShareServiceClient 초기화 (SAS 토큰 포함)
+        // SAS 토큰은 파일 공유(Share) 수준에서 발급되어야 합니다.
+        // URL 형식: https://<storageaccountname>.file.core.windows.net/<filesharename>?<sastoken>
+        // 또는 ShareServiceClient에 sasCredential을 직접 전달합니다.
+        const shareServiceClient = new ShareServiceClient(
+            `https://${accountName}.file.core.windows.net`,sasCredential);
+
+            // 특정 파일 공유 클라이언트 가져오기
+        const shareClient = shareServiceClient.getShareClient(fshareName);
+
+        // 파일 공유가 존재하는지 확인 (SAS 토큰에 따라 권한이 없을 수 있음)
+        if (!(await shareClient.exists())) {
+            console.error(`오류: 파일 공유 '${fshareName}'가 존재하지 않거나, SAS 토큰에 접근 권한이 없습니다.`);
+            return;
+        }
+
+        // 루트 디렉토리 클라이언트 가져오기
+        const directoryClient = shareClient.getDirectoryClient(''); // 루트 디렉토리
+
+        console.log(`\n파일 공유 '${fshareName}'의 내용:`);
+
+
+
+
+    //const shareServiceClient = new ShareServiceClient(`https://${accountName}.file.core.windows.net?${sasToken}`);
     const shares = [];
     for await (const shareItem of shareServiceClient.listShares()) {
       const shareClient = shareServiceClient.getShareClient(shareItem.name);
