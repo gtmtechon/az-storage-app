@@ -46,6 +46,7 @@ async function getBlobFiles(containerName) {
       // 올바른 URL 형식으로 조합
       const fileUrl = `https://${accountName}.blob.core.windows.net/${containerName}/${blob.name}?${sasToken}`;
       files.push({ name: blob.name, url: fileUrl });
+      console.log(`[getblobfiles]Blob found: ${blob.name} - URL: ${fileUrl}`);
     }
     return files;
   } catch (error) {
@@ -149,14 +150,21 @@ async function getAzureFiles() {
             sharedKeyCredential
         );
 
+
+
+
             // 특정 파일 공유 클라이언트 가져오기
-        const shareClient = shareServiceClient.getShareClient(fshareName);
+        const shareClient = shareServiceClient.getShareClient('pictures');
+ 
 
         // 파일 공유가 존재하는지 확인 (SAS 토큰에 따라 권한이 없을 수 있음)
+        /*
         if (!(await shareClient.exists())) {
             console.error(`오류: 파일 공유 '${fshareName}'가 존재하지 않거나, SAS 토큰에 접근 권한이 없습니다.`);
             return;
         }
+            */
+           
 
         // 루트 디렉토리 클라이언트 가져오기
         //const directoryClient = shareClient.getDirectoryClient(''); // 루트 디렉토리
