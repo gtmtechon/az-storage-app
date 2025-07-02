@@ -9,6 +9,7 @@ async function getBlobFiles(containerName) {
     const sasToken = process.env.BLOB_SAS_TOKEN; // 여기서 SAS 토큰을 다시 가져와야 합니다.
     console.log('${sasToken}');
 
+    
     if (!accountName || !sasToken) {
       throw new Error("BLOB_STORAGE_ACCOUNT_NAME or BLOB_SAS_TOKEN environment variable is not set.");
     }
