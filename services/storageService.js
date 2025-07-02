@@ -1,6 +1,7 @@
 // services/storageService.js
+
 const { BlobServiceClient } = require("@azure/storage-blob");
-const { ShareServiceClient } = require("@azure/storage-file-share");
+//const { ShareServiceClient } = require("@azure/storage-file-share");
 const { ShareServiceClient, AzureSasCredential } = require('@azure/storage-file-share');
 
 // const { getSecret } = require("../utils/keyvault"); // Key Vault 참조를 사용할 경우 이 줄은 필요 없습니다.
