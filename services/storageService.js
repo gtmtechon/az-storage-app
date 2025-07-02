@@ -6,7 +6,9 @@ const { ShareServiceClient, AzureSasCredential } = require('@azure/storage-file-
 
 // const { getSecret } = require("../utils/keyvault"); // Key Vault 참조를 사용할 경우 이 줄은 필요 없습니다.
 
+/*
 const getBlobServiceClient = async () => {
+  shareServiceUri=""
   const accountName = process.env.BLOB_STORAGE_ACCOUNT_NAME;
   const sasToken = process.env.BLOB_SAS_TOKEN; // Key Vault 참조를 통해 환경 변수로 주입된 SAS 토큰
   if (!sasToken) {
@@ -17,6 +19,7 @@ const getBlobServiceClient = async () => {
 };
 
 const getShareServiceClient = async () => {
+  shareServiceUri=""
   const accountName = process.env.FILE_SHARE_STORAGE_ACCOUNT_NAME;
   const sasToken = process.env.FILE_SAS_TOKEN; // Key Vault 참조를 통해 환경 변수로 주입된 SAS 토큰 (Azure Files용)
   if (!sasToken) {
@@ -25,7 +28,7 @@ const getShareServiceClient = async () => {
   const shareServiceUri = `https://${accountName}.file.core.windows.net?${sasToken}`;
   return new ShareServiceClient(shareServiceUri);
 };
-
+*/
 // getBlobFiles 함수를 수정합니다.
 async function getBlobFiles(containerName) {
   try {
@@ -198,20 +201,14 @@ async function getAzureFiles() {
 }
 
 
+
+async function getSMBFiles() {
+
+    const MOUNT_PATH = '/mnt/appdata';
+
 const fs = require('fs').promises;
 const path = require('path');
 
-// App Service에 마운트된 Azure File Share의 경로
-const MOUNT_PATH = '/mnt/appdata';
-
-/**
- * SMB로 마운트된 파일 공유의 파일 목록을 가져오는 함수.
- * EJS 템플릿의 'shares' 변수 형식에 맞춰 데이터를 반환합니다.
- *
- * @returns {Promise<Array<{name: string, files: Array<{name: string, url: string, shareName: string}>}>>}
- * 파일 공유 목록 (단일 마운트된 공유이므로 배열에 하나의 공유 객체만 포함).
- */
-async function getSMBFiles() {
     console.log(`마운트된 경로 '${MOUNT_PATH}'에서 파일 목록을 조회합니다.`);
     let filesInShare = [];
     const shareName = 'Mounted Azure File Share'; // 단일 마운트된 공유이므로 고정된 이름 사용
