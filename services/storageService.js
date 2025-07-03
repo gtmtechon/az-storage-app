@@ -46,7 +46,7 @@ async function getAzureFiles() {
     const fshareName=process.env.AZURE_FILE_SHARE_NAME;
 
 
-    if (!accountName || !sasToken || !fshareName) {
+    if (!accountName || !acckey || !fshareName) {
       throw new Error("FILE_SHARE_STORAGE_ACCOUNT_NAME or FILE_SAS_TOKEN environment variable is not set.");
     }
 
