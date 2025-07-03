@@ -135,7 +135,7 @@ async function getSMBFiles() {
             if (stats.isFile()) {
                 // 웹에서 접근할 수 있는 URL 생성
                 // 파일은 '/files/:filename' 라우트를 통해 서빙됩니다.
-                const fileUrl = `/files/${encodeURIComponent(file)}`;
+                const fileUrl = `${MOUNT_PATH}/${encodeURIComponent(file)}`;
 
                 smbfilesInShare.push({
                     name: file,
