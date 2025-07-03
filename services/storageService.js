@@ -7,7 +7,7 @@ async function getBlobFiles(containerName) {
   try {
     const accountName = process.env.BLOB_STORAGE_ACCOUNT_NAME;
     const sasToken = process.env.BLOB_SAS_TOKEN; // 여기서 SAS 토큰을 다시 가져와야 합니다.
-    console.log('${sasToken}');
+    console.log('containerName:', containerName);
 
     
     if (!accountName || !sasToken) {
@@ -86,7 +86,7 @@ async function getAzureFiles() {
           // Azure Files는 SAS 토큰이 서비스 클라이언트에 포함되어 있으므로
           // 파일 URL은 일반적으로 `shareClient.url`을 기반으로 합니다.
           // 여기서도 명시적으로 SAS 토큰을 URL에 포함시키려면 아래처럼 할 수 있습니다.
-          const fileUrl = `${shareClient.url}/${item.name}?${sasToken}`;
+          const fileUrl = `${shareClient.url}/${item.name}?`;
           filesInShare.push({
             name: item.name,
             url: fileUrl,
@@ -116,7 +116,7 @@ async function getSMBFiles() {
 
     console.log(`마운트된 경로 '${MOUNT_PATH}'에서 파일 목록을 조회합니다.`);
     let smbfilesInShare = [];
-    const smbshareName = 'Mounted Azure File Share'; // 단일 마운트된 공유이므로 고정된 이름 사용
+    const smbshareName = 'appdata'; // 단일 마운트된 공유이므로 고정된 이름 사용
 
     try {
         // 마운트 경로가 존재하는지 확인
@@ -146,7 +146,7 @@ async function getSMBFiles() {
         }
         console.log(`총 ${smbfilesInShare.length}개의 파일을 찾았습니다.`);
         // EJS 템플릿의 'shares' 형식에 맞춰 배열 반환
-        return [{ name: shareName, files: smbfilesInShare }];
+        return [{ name: smbfilesInShare, files: smbfilesInShare }];
 
     } catch (error) {
         console.error('getSMBFiles 함수에서 오류 발생:', error);
